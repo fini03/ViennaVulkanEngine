@@ -4,7 +4,7 @@
 #elif __APPLE__
 #define VK_USE_PLATFORM_MACOS_MVK
 #else
-#define VK_USE_PLATFORM_XCB_KHR
+#define VK_USE_PLATFORM_WAYLAND_KHR
 #endif
 
 #include <iostream>
