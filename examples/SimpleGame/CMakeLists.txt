@@ -1,59 +1,35 @@
-
-
-include_directories(${CMAKE_SOURCE_DIR}/VulkanEngine ${CMAKE_SOURCE_DIR}/external/irrKlang/include)
-
 add_executable(simplegame simplegame.cpp)
 
-target_include_directories(simplegame PUBLIC ${CMAKE_SOURCE_DIR}/external/Assimp/include)
-target_include_directories(simplegame PUBLIC ${CMAKE_SOURCE_DIR}/external/glfw/include)
-target_include_directories(simplegame PUBLIC ${CMAKE_SOURCE_DIR}/external/glm)
-target_include_directories(simplegame PUBLIC ${CMAKE_SOURCE_DIR}/external/nuklear)
+set_target_properties(simplegame PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/Release
+            )
+
+# Link the VVE
+include_directories(${CMAKE_SOURCE_DIR}/VulkanEngine)
+target_link_libraries(simplegame vulkanengine)
+
+# additional include directories
 target_include_directories(simplegame PUBLIC ${CMAKE_SOURCE_DIR}/external/stb)
 target_include_directories(simplegame PUBLIC ${CMAKE_SOURCE_DIR}/external/threadpool)
+target_include_directories(simplegame PUBLIC ${CMAKE_SOURCE_DIR}/external/nuklear)
 
+# list of all dependencies here
 find_package(Vulkan REQUIRED)
 include_directories(${Vulkan_INCLUDE_DIRS})
+target_link_libraries(simplegame Vulkan::Vulkan)
 
-set_target_properties(simplegame PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin
-            )
+set(IRRKLANG_ROOT ${CMAKE_SOURCE_DIR}/external/irrKlang)
+find_package(IrrKlang REQUIRED)
+target_include_directories(simplegame PUBLIC ${IRRKLANG_INCLUDE_DIR})
+target_link_libraries(simplegame ${IRRKLANG_LIBRARY})
 
-add_library(vve STATIC IMPORTED)
-set_target_properties(vve PROPERTIES
-           IMPORTED_CONFIGURATIONS "Debug;Release"
-           IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/lib/Release/vulkanengine.lib
-           IMPORTED_LOCATION_DEBUG ${CMAKE_SOURCE_DIR}/lib/Debug/vulkanengine.lib
-           )
+find_package(ZLIB REQUIRED)
+target_link_libraries(simplegame ZLIB::ZLIB)
 
-#Link Assimp link libraries
-set( AssimpDir ${CMAKE_SOURCE_DIR}/external/Assimp/lib/x64)
-set( AssimpLibRel ${AssimpDir}/Release/assimp-vc140-mt.lib ${AssimpDir}/Release/IrrXML.lib ${AssimpDir}/Release/zlib.lib )
-set( AssimpLibDeb ${AssimpDir}/Debug/assimp-vc140-mt.lib ${AssimpDir}/Debug/IrrXML.lib ${AssimpDir}/Debug/zlibd.lib )
-add_library(AssimpLib STATIC IMPORTED)
-set_target_properties(AssimpLib PROPERTIES
-            IMPORTED_CONFIGURATIONS "Debug;Release"
-            IMPORTED_LOCATION ${AssimpLibRel}
-            IMPORTED_LOCATION_DEBUG ${AssimpLibDeb}
-            )
+find_package(assimp REQUIRED)
+target_include_directories(simplegame PUBLIC ${assimp_INCLUDE_DIRS})
+target_link_libraries(simplegame assimp::assimp)
 
-target_link_libraries(simplegame
-          vve
-          AssimpLib
-          ${CMAKE_SOURCE_DIR}/external/irrKlang/lib/irrKlang.lib
-          ${CMAKE_SOURCE_DIR}/external/glfw/lib-vc2022/glfw3.lib
-          )
-
-find_package(Vulkan REQUIRED)
-
-
-#set( CMAKE_VS_SDK_EXECUTABLE_DIRECTORIES $(CMAKE_VS_SDK_EXECUTABLE_DIRECTORIES);$(VULKAN_SDK);)
-
-file(COPY ${CMAKE_SOURCE_DIR}/external/Assimp/lib/x64/Debug/assimp-vc140-mt.dll DESTINATION ${CMAKE_SOURCE_DIR}/bin/Debug)
-file(COPY ${CMAKE_SOURCE_DIR}/external/Assimp/lib/x64/Release/assimp-vc140-mt.dll DESTINATION ${CMAKE_SOURCE_DIR}/bin/Release)
-
-file(COPY ${CMAKE_SOURCE_DIR}/external/irrKlang/bin/ikpFlac.dll DESTINATION ${CMAKE_SOURCE_DIR}/bin/Debug)
-file(COPY ${CMAKE_SOURCE_DIR}/external/irrKlang/bin/ikpMP3.dll DESTINATION ${CMAKE_SOURCE_DIR}/bin/Debug)
-file(COPY ${CMAKE_SOURCE_DIR}/external/irrKlang/bin/irrKlang.dll DESTINATION ${CMAKE_SOURCE_DIR}/bin/Debug)
-file(COPY ${CMAKE_SOURCE_DIR}/external/irrKlang/bin/ikpFlac.dll DESTINATION ${CMAKE_SOURCE_DIR}/bin/Release)
-file(COPY ${CMAKE_SOURCE_DIR}/external/irrKlang/bin/ikpMP3.dll DESTINATION ${CMAKE_SOURCE_DIR}/bin/Release)
-file(COPY ${CMAKE_SOURCE_DIR}/external/irrKlang/bin/irrKlang.dll DESTINATION ${CMAKE_SOURCE_DIR}/bin/Release)
+find_package(glm CONFIG REQUIRED)
+target_include_directories(simplegame PUBLIC ${glm_INCLUDE_DIRS})
+target_link_libraries(simplegame glm)
