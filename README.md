@@ -34,6 +34,37 @@ The VVE must be compiled into a static link library, under Windows 11 this is a 
 
 The project will be updated regularly, so it makes sense to pull the newest version regularly.
 
+# Set up for Linux
+
+The engine has been tested on archlinux with wayland and the Intel driver. First to install vulkan follow the installation guide from [archlinux](https://wiki.archlinux.org/title/Vulkan). Afterwards the following dependencies are needed for building:
+```
+pacman -S base-devel cmake assimp glfw-wayland glm stb vulkan-devel
+```
+For X11 users install `glfw-x11` instead of `glfw-wayland`.
+
+### Building
+- Clone both projects Vienna Vulkan Engine and Vienna Physics Engine, into the same directory, next to each other
+- Cd into Vienna Vulkan Engine and create a build folder and run CMake there
+- Run make
+- Go back to the root folder and cd into `/bin/Release` where the binary is located
+- Execute the binary
+
+List of commands:
+```
+cd ViennaVulkanEngine
+mkdir build
+cd build
+cmake ..
+make
+cd ..
+cd bin/Release
+./simplegame
+```
+
+P.S.: Incase the binary crashes while using the newest `vulkan-intel` driver, download the following driver `vulkan-intel-23.1.4-2-x86_64.pkg.tar.zst 23-Jul-2023 00:06` from [here](https://archive.archlinux.org/packages/v/vulkan-intel/). Execute the following command then:
+```
+sudo pacman -U /path/to/vulkan-intel-23.1.4-2-x86_64.pkg.tar.zst
+```
 
 # How to use Vienna Vulkan Engine
 
